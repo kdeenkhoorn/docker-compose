@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+   mysql:
+     image: kdedesign/mysql-server:8.0
+     container_name: mysql-server
+     volumes:
+       - /data/docker/mysqld:/var/lib/mysql
+     restart: always
+     networks:
+       - backend
+
+   gogs:
+     depends_on:
+       - mysql
+     image: kdedesign/gogs:latest
+     container_name: gogs
+     volumes:
+       - /data/docker/gogs/data:/data
+     ports:
+       - "3000:3000"
+       - "3022:3022"
+     restart: always
+     networks:
+       - frontend
+       - backend
+
+networks:
+   frontend:
+     internal: false
+   backend:
+     internal: true
