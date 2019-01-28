@@ -16,17 +16,14 @@ services:
      image: kdedesign/gogs:latest
      container_name: gogs
      volumes:
-       - /data/docker/gogs/data:/data
+       - /data/docker/gogs:/data
      ports:
        - "3000:3000"
        - "3022:3022"
      restart: always
      networks:
-       - frontend
        - backend
 
 networks:
-   frontend:
-     internal: false
    backend:
      internal: true
