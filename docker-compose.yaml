@@ -1,0 +1,101 @@
+version: '3.7'
+
+services:
+   elog:
+     image: kdedesign/elog:latest
+     container_name: elog
+     volumes:
+       - /data/docker/elog:/var/lib/elog
+     restart: always
+     networks:
+       - proxy
+
+   mysqld:
+     image: kdedesign/mysql-server:8.0
+     container_name: mysqld
+     volumes:
+       - /data/docker/mysqld:/var/lib/mysql
+       - /data/docker/mysqld/conf/my.cnf:/etc/my.cnf
+       - /data/docker/ExportImport:/ExportImport
+     restart: always
+     networks:
+       - my-rc-backend
+
+   gogs:
+     depends_on:
+       - mysqld
+     image: kdedesign/gogs:latest
+     container_name: gogs
+     volumes:
+       - /data/docker/gogs/ssh:/opt/gogs/.ssh
+       - /data/docker/gogs:/data
+     restart: always
+     networks:
+       - my-rc-backend
+       - proxy
+
+   www:
+     depends_on:
+       - mysqld
+     image: kdedesign/apache2:7.0.33
+     container_name: www
+     volumes:
+       - /data/www/html:/var/www/html
+     restart: always
+     networks:
+       - my-rc-backend
+       - proxy
+
+   ontwikkel:
+     depends_on:
+       - mysqld
+     image: kdedesign/apache2:5.6.33
+     container_name: ontwikkel
+     volumes:
+       - /data/www/ontwikkel:/var/www/html
+     restart: always
+     networks:
+       - my-rc-backend
+       - proxy
+
+   traefik:
+     image: traefik:alpine
+     container_name: traefik
+     labels:
+       - traefik.frontend.rule=Host:traefik.int.kdedesign.nl
+       - traefik.port=8080
+     volumes:
+       - /var/run/docker.sock:/var/run/docker.sock
+       - /data/docker/traefik/traefik.toml:/traefik.toml
+       - /data/docker/traefik/acme.json:/acme.json
+       - /data/docker/traefik/update_dns.sh:/update_dns.sh
+     ports:
+       - 80:80
+       - 443:443
+     env_file:
+       - /data/docker/traefik/.credentials.sh
+     restart: always
+     networks:
+       - proxy
+
+   phpmyadmin:
+     depends_on:
+       - mysqld
+     image: kdedesign/phpmyadmin:latest
+     container_name: phpmyadmin
+     volumes:
+       - /data/docker/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.inc.php
+     restart: always
+     networks:
+       - my-rc-backend
+       - proxy
+
+networks:
+   my-rc-backend:
+     driver: bridge
+     internal: true
+     attachable: true
+   proxy:
+     driver: bridge
+     attachable: true
+     external: false
