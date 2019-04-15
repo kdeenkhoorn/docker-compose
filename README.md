@@ -29,7 +29,7 @@ Proxy.int +----+--------------+--------------+-----------+----------+--------+
                                     +----------+
 ```
 
-Traefik in this setup generates SSl certificates for my hostnames like:
+Traefik in this setup generates SSL certificates for my hostnames like:
 * Containername : elog 
 * Sitename      : https://elog.int.kdedesign.nl
 
