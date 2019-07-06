@@ -1,5 +1,5 @@
 [Unit]
-Description=Harbor Service
+Description=MyRC Service
 After=docker.service
 
 [Service]
@@ -7,9 +7,9 @@ Type=oneshot
 RemainAfterExit=yes
 StandardError=null
 StandardOutput=null
-WorkingDirectory=
-ExecStart=/usr/local/bin/docker-compose -f /opt/Harbor-Serpro/harbor-v1.7.4/docker-compose.yml -f /opt/Harbor-Serpro/harbor-v1.7.4/docker-compose.notary.yml -f /opt/Harbor-Serpro/harbor-v1.7.4/docker-compose.clair.yml up -d
-ExecStop=/usr/local/bin/docker-compose -f /opt/Harbor-Serpro/harbor-v1.7.4/docker-compose.yml -f /opt/Harbor-Serpro/harbor-v1.7.4/docker-compose.notary.yml -f /opt/Harbor-Serpro/harbor-v1.7.4/docker-compose.clair.yml down
+WorkingDirectory=/opt/docker
+ExecStart=/usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml up -d
+ExecStop=/usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml down
 
 [Install]
 WantedBy=multi-user.target
