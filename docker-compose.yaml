@@ -10,14 +10,14 @@ services:
      networks:
        - proxy
 
-#   jenkins:
-#     image: kdedesign/jenkins:2.176.1
-#     container_name: jenkins
-#     volumes:
-#       - /data/docker/jenkins:/var/jenkins_home
-#     restart: always
-#     networks:
-#       - proxy
+   jenkins:
+     image: kdedesign/jenkins:2.176.1
+     container_name: jenkins
+     volumes:
+       - /data/docker/jenkins:/var/jenkins_home
+     restart: always
+     networks:
+       - proxy
 
    mysqld:
      image: kdedesign/mysql-server:8.0
