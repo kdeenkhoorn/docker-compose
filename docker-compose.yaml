@@ -104,6 +104,11 @@ services:
      container_name: urbackup
      labels:
        - traefik.port=55414
+     ports:
+       - 55413:55413
+       - 55414:55414
+       - 55415:55415
+       - 35623:35623
      volumes:
        - /data/docker/urbackup/backups:/backups
        - /data/docker/urbackup/database:/var/urbackup
