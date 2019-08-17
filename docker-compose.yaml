@@ -99,6 +99,21 @@ services:
        - my-rc-backend
        - proxy
 
+   urbackup:
+     image: kdedesign/urbackup-server:latest
+     container_name: urbackup
+     labels:
+       - traefik.port=55414
+     volumes:
+       - /data/docker/urbackup/backups:/backups
+       - /data/docker/urbackup/database:/var/urbackup
+       - /data/docker/urbackup/log:/var/log
+     restart: always
+     dns:
+       - 192.168.2.254
+     networks:
+       - proxy
+
 networks:
    my-rc-backend:
      driver: bridge
@@ -107,4 +122,3 @@ networks:
    proxy:
      driver: bridge
      attachable: true
-     external: false
