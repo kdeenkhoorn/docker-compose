@@ -33,7 +33,7 @@ Traefik in this setup generates SSL certificates for my hostnames like:
 * Containername : elog 
 * Sitename      : https://elog.int.kdedesign.nl
 
-This is done by manipulating my CPanel DNS with the plugin for traefik i have developed: https://github.com/kdeenkhoorn/update_dns_traefik.git
+This is done by manipulating my DirectAdmin DNS with the plugin for traefik i have developed: https://github.com/kdeenkhoorn/update_dns_traefik.git
 
 Greetzzz and have fun,
 
