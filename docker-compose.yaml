@@ -37,7 +37,7 @@ services:
    www:
      depends_on:
        - mysqld
-     image: kdedesign/apache2:7.0.33
+     image: kdedesign/apache2:latest
      container_name: www
      volumes:
        - /data/www/html:/var/www/html
