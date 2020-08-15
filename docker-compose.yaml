@@ -34,6 +34,18 @@ services:
        - my-rc-backend
        - proxy
 
+   motioneye:
+     image: ccrisan/motioneye:master-armhf
+     container_name: motioneye
+     hostname: motioneye
+     volumes:
+       - /etc/localtime:/etc/localtime:ro
+       - /data/docker/motioneye/etc:/etc/motioneye
+       - /data/docker/motioneye/var:/var/lib/motioneye
+     restart: always
+     networks:
+       - proxy
+
    www:
      depends_on:
        - mysqld
@@ -46,17 +58,17 @@ services:
        - my-rc-backend
        - proxy
 
-   ontwikkel:
-     depends_on:
-       - mysqld
-     image: kdedesign/apache2:5.6.33
-     container_name: ontwikkel
-     volumes:
-       - /data/www/ontwikkel:/var/www/html
-     restart: always
-     networks:
-       - my-rc-backend
-       - proxy
+#   ontwikkel:
+#     depends_on:
+#       - mysqld
+#     image: kdedesign/apache2:5.6.33
+#     container_name: ontwikkel
+#     volumes:
+#       - /data/www/ontwikkel:/var/www/html
+#     restart: always
+#     networks:
+#       - my-rc-backend
+#       - proxy
 
    traefik:
      image: traefik:alpine
@@ -84,7 +96,7 @@ services:
      image: kdedesign/phpmyadmin:latest
      container_name: phpmyadmin
      volumes:
-       - /data/docker/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.inc.php
+       - /data/docker/phpmyadmin/config.inc.php:/opt/phpMyAdmin/config.inc.php
      restart: always
      networks:
        - my-rc-backend
