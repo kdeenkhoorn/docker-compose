@@ -53,6 +53,8 @@ services:
      container_name: www
      volumes:
        - /data/www/html:/var/www/html
+       - /data/www/www-000-default.conf:/etc/apache2/sites-available/000-default.conf
+       - /data/www/DavLock:/var/www/DavLock
      restart: always
      networks:
        - my-rc-backend
