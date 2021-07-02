@@ -34,6 +34,7 @@ Traefik in this setup generates SSL certificates for my hostnames like:
 * Sitename      : https://elog.int.kdedesign.nl
 
 This is done by manipulating my DirectAdmin DNS with the plugin for traefik i have developed: https://github.com/kdeenkhoorn/update_dns_traefik.git
+One file not included in this git repo is the file '.env' in the root of this project containing the variable 'EMAIL' which holds my email address for LetsEncrypt purposes.
 
 Greetzzz and have fun,
 

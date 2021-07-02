@@ -9,6 +9,12 @@ services:
      restart: always
      networks:
        - proxy
+     labels:
+      - traefik.enable=true
+      - traefik.http.routers.elog.rule=Host(`elog.int.kdedesign.nl`)
+      - traefik.http.services.elog.loadbalancer.server.port=8080
+      - traefik.http.routers.elog.entrypoints=websecure
+      - traefik.http.routers.elog.tls.certresolver=myresolver
 
    mysqld:
      image: kdedesign/mysql-server:8.0
@@ -20,6 +26,8 @@ services:
      restart: always
      networks:
        - my-rc-backend
+     labels:
+       - traefik.enable=false
 
    gogs:
      depends_on:
@@ -33,6 +41,12 @@ services:
      networks:
        - my-rc-backend
        - proxy
+     labels:
+      - traefik.enable=true
+      - traefik.http.routers.gogs.rule=Host(`gogs.int.kdedesign.nl`)
+      - traefik.http.services.gogs.loadbalancer.server.port=3000
+      - traefik.http.routers.gogs.entrypoints=websecure
+      - traefik.http.routers.gogs.tls.certresolver=myresolver
 
    motioneye:
      image: ccrisan/motioneye:master-armhf
@@ -45,6 +59,12 @@ services:
      restart: always
      networks:
        - proxy
+     labels:
+      - traefik.enable=true
+      - traefik.http.routers.motioneye.rule=Host(`motioneye.int.kdedesign.nl`)
+      - traefik.http.services.motioneye.loadbalancer.server.port=8765
+      - traefik.http.routers.motioneye.entrypoints=websecure
+      - traefik.http.routers.motioneye.tls.certresolver=myresolver
 
    www:
      depends_on:
@@ -59,6 +79,13 @@ services:
      networks:
        - my-rc-backend
        - proxy
+     labels:
+      - traefik.enable=true
+      - traefik.http.routers.www.rule=Host(`www.int.kdedesign.nl`)
+      - traefik.http.services.www.loadbalancer.server.port=80
+      - traefik.http.routers.www.entrypoints=websecure
+      - traefik.http.routers.www.tls.certresolver=myresolver
+
 
 #   ontwikkel:
 #     depends_on:
@@ -71,17 +98,44 @@ services:
 #     networks:
 #       - my-rc-backend
 #       - proxy
+#     labels:
+#      - traefik.enable=true
+#      - traefik.http.routers.ontwikkel.rule=Host(`ontwikkel.int.kdedesign.nl`)
+#      - traefik.http.services.ontwikkel.loadbalancer.server.port=80
+#      - traefik.http.routers.ontwikkel.entrypoints=websecure
+#      - traefik.http.routers.ontwikkel.tls.certresolver=myresolver
+
 
    traefik:
-     image: traefik:alpine
+     image: traefik:latest
      container_name: traefik
      labels:
-       - traefik.frontend.rule=Host:traefik.int.kdedesign.nl
-       - traefik.port=8080
+       - traefik.http.routers.dashboard.rule=Host(`traefik.int.kdedesign.nl`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+       - traefik.http.routers.dashboard.service=api@internal
+       - traefik.http.routers.dashboard.middlewares=auth
+       - traefik.http.middlewares.auth.basicauth.usersFile=traefik.users
+     command:
+       --api.insecure=false
+       --api.dashboard=true
+       --certificatesresolvers.myresolver.acme.email="${EMAIL}"
+       --certificatesresolvers.myresolver.acme.storage=acme.json
+       --certificatesresolvers.myresolver.acme.dnschallenge.provider=exec
+       --certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0
+       --entrypoints.web.address=:80
+       --entrypoints.web.http.redirections.entryPoint.to=websecure
+       --entrypoints.web.http.redirections.entryPoint.scheme=https
+       --entrypoints.web.http.redirections.entryPoint.permanent=true
+       --entrypoints.websecure.address=:443
+       --entrypoints.websecure.http.tls.certresolver=myresolver
+       --global.checkNewVersion=true
+       --global.sendAnonymousUsage=false
+       --log.level=INFO
+       --providers.docker=true
+       --providers.docker.network=int_proxy
      volumes:
        - /var/run/docker.sock:/var/run/docker.sock
-       - /data/docker/traefik/traefik.toml:/traefik.toml
        - /data/docker/traefik/acme.json:/acme.json
+       - /data/docker/traefik/traefik.users:/traefik.users
        - /data/docker/traefik/update_dns_da.sh:/update_dns_da.sh
      ports:
        - 80:80
@@ -103,6 +157,12 @@ services:
      networks:
        - my-rc-backend
        - proxy
+     labels:
+      - traefik.enable=true
+      - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.int.kdedesign.nl`)
+      - traefik.http.services.phpmyadmin.loadbalancer.server.port=80
+      - traefik.http.routers.phpmyadmin.entrypoints=websecure
+      - traefik.http.routers.phpmyadmin.tls.certresolver=myresolver
 
 networks:
    my-rc-backend:
