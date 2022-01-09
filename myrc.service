@@ -8,6 +8,7 @@ RemainAfterExit=yes
 StandardError=journal+console
 StandardOutput=journal+console
 WorkingDirectory=/opt/docker
+ExecStartPre=/usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml pull
 ExecStart=/usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml up -d
 ExecStop=/usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml down
 ExecReload=/bin/bash -c '/usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml pull && /usr/local/bin/docker-compose -p int -f /opt/docker/docker-compose.yaml up -d'
